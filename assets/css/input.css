@@ -1,0 +1,21 @@
+/* The Tailwind entry file. Hand-written; loom.css beside it is generated.
+ *
+ * `make css` runs:
+ *
+ *   go run github.com/pietjan/loom/cmd/css -accent indigo -o assets/css/loom.css
+ *   tailwindcss -i assets/css/input.css -o assets/static/styles.css --minify
+ *
+ * loom.css carries the Tailwind import, loom's theme and structural CSS,
+ * and an @source pointing at loom's own module directory, so the classes
+ * baked into its components are compiled. This file adds this repository.
+ */
+
+/* @import, not @source: a stylesheet read as a source is scanned for class
+ * names like any other text file, which compiles a sheet with nothing in it. */
+@import "./loom.css";
+
+/* This repository: the .templ views and the Go that composes components. */
+@source "../..";
+
+/* The transcript scrolls; the rest of the page does not. */
+html, body { height: 100%; }

@@ -1,0 +1,27 @@
+package ui
+
+import "github.com/pietjan/shuttle"
+
+// shellDocument is the page shell. The transcript auto-scroll is the one
+// piece of our own JavaScript: streamed patches do not re-run data-init,
+// so a MutationObserver on the transcript keeps the newest line in view
+// unless the reader has scrolled up.
+templ shellDocument(p shuttle.Page) {
+	<!DOCTYPE html>
+	<html lang="en" class="scheme-light dark:scheme-dark">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ p.Title }</title>
+			<script type="module" src={ p.ScriptURL }></script>
+			@templ.Raw(p.Head)
+			@templ.Raw(p.Scripts)
+		</head>
+		<body class="h-full bg-base-50 text-base-800 dark:bg-base-900 dark:text-base-100" data-init={ p.Attach }>
+			<div class="hidden bg-amber-600 px-4 py-2 text-center text-sm font-medium text-white in-[.shuttle-reconnecting]:block in-[.shuttle-dead]:block">
+				Connection lost — trying to reconnect…
+			</div>
+			@templ.Raw(p.Body)
+		</body>
+	</html>
+}

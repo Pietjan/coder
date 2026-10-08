@@ -1,0 +1,92 @@
+package ui
+
+import (
+	"github.com/pietjan/loom/code"
+	"github.com/pietjan/loom/markdown"
+
+	"github.com/pietjan/coder/internal/agent"
+)
+
+templ userItem(e agent.Event) {
+	<div class="ml-16 whitespace-pre-wrap rounded-lg bg-accent-50 px-4 py-3 text-sm dark:bg-accent-950/40">{ e.Text }</div>
+}
+
+templ curItem(text, reasoning string) {
+	<div class="rounded-lg border border-dashed border-base-300 px-4 py-3 text-sm dark:border-base-700">
+		if reasoning != "" {
+			<details class="mb-2 text-xs text-base-500">
+				<summary class="cursor-pointer">thinking</summary>
+				<div class="mt-1 whitespace-pre-wrap">{ reasoning }</div>
+			</details>
+		}
+		if text == "" && reasoning == "" {
+			<span class="animate-pulse text-base-400">…</span>
+		} else {
+			@markdown.New(text)
+		}
+	</div>
+}
+
+templ assistantItem(e agent.Event) {
+	<div class="rounded-lg px-4 py-3 text-sm">
+		if e.Reasoning != "" {
+			<details class="mb-2 text-xs text-base-500">
+				<summary class="cursor-pointer">thinking</summary>
+				<div class="mt-1 whitespace-pre-wrap">{ e.Reasoning }</div>
+			</details>
+		}
+		@markdown.New(e.Text)
+	</div>
+}
+
+// toolItem shows a call, and its result once there is one.
+templ toolItem(call agent.Event, res *agent.Event) {
+	<details class="rounded-lg border border-base-200 text-sm dark:border-base-800">
+		<summary class="flex cursor-pointer items-center gap-2 px-3 py-2">
+			<span class="rounded bg-base-200 px-1.5 py-0.5 font-mono text-xs dark:bg-base-800">{ call.Tool }</span>
+			<span class="truncate text-base-500">{ preview(call.Input) }</span>
+			<span class="ml-auto text-xs">
+				switch {
+					case res == nil:
+						<span class="text-base-400">running…</span>
+					case res.IsError:
+						<span class="text-red-600 dark:text-red-400">error</span>
+					default:
+						<span class="text-green-600 dark:text-green-400">ok</span>
+				}
+			</span>
+		</summary>
+		<div class="grid gap-2 border-t border-base-200 px-3 py-2 dark:border-base-800">
+			@code.New(pretty(call.Input), code.Language("json"))
+			if res != nil {
+				<pre class="max-h-96 overflow-auto whitespace-pre-wrap rounded bg-base-100 p-2 text-xs dark:bg-base-950">{ clipOutput(res.Output) }</pre>
+			}
+		</div>
+	</details>
+}
+
+// approvalItem marks where a decision was asked for; the buttons live in
+// the frame above the composer, where actions can be bound.
+templ approvalItem(e agent.Event, resolved bool) {
+	<div class="text-xs text-base-500">
+		<span class="font-mono">{ e.Tool }</span>
+		if !resolved {
+			: waiting for your approval
+		} else {
+			switch e.Decision {
+				case agent.Allow:
+					: allowed
+				case agent.AllowSession:
+					: allowed for this session
+				case agent.Deny:
+					: denied
+				default:
+					: approval expired
+			}
+		}
+	</div>
+}
+
+templ errorItem(e agent.Event) {
+	<div class="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300">{ e.Text }</div>
+}

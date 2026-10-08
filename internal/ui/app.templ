@@ -1,0 +1,109 @@
+package ui
+
+import (
+	"context"
+
+	"github.com/pietjan/loom/button"
+	"github.com/pietjan/loom/input"
+	"github.com/pietjan/loom/textarea"
+	"github.com/pietjan/shuttle"
+
+	"github.com/pietjan/coder/internal/agent"
+)
+
+// page is the frame: sidebar, transcript, composer, status line.
+templ page(ctx context.Context, a *App, inline []templ.Component) {
+	<div class="grid h-screen grid-cols-[260px_minmax(0,1fr)]">
+		<aside class="flex min-h-0 flex-col gap-3 overflow-hidden border-r border-base-200 bg-base-100 p-3 dark:border-base-800 dark:bg-base-950">
+			<div class="flex items-center justify-between">
+				<span class="text-sm font-semibold">coder</span>
+			</div>
+			<div class="grid gap-2">
+				@input.New(input.Placeholder("project directory"), input.WithSize(input.SizeSmall), shuttle.Bind(ctx, input.Attr, "project"))
+				@button.New(button.Primary, button.Small, shuttle.OnClick(ctx, button.Attr, a.newSession)) {
+					New session
+				}
+			</div>
+			<nav class="min-h-0 flex-1 overflow-y-auto">
+				<ul class="grid gap-1 text-sm">
+					for _, m := range a.sessions {
+						<li>
+							<button
+								type="button"
+								class={ "w-full overflow-hidden rounded-md px-2 py-1.5 text-left hover:bg-base-200 dark:hover:bg-base-800",
+									templ.KV("bg-base-200 dark:bg-base-800 font-medium", a.current(m.ID)) }
+								{ attrs(shuttle.OnClick(ctx, rawAttr, a.open(m.ID)))... }
+							>
+								<div class="truncate">{ m.Title }</div>
+								<div class="truncate text-xs text-base-500">{ ago(m.Updated) } · { m.Project }</div>
+							</button>
+						</li>
+					}
+				</ul>
+			</nav>
+		</aside>
+		<main class="flex min-h-0 min-w-0 flex-col overflow-hidden">
+			<div id="transcript" class="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+				<div class="mx-auto grid w-full min-w-0 max-w-4xl gap-3" { attrs(shuttle.Container(a.Stream(streamName), rawAttr))... }>
+					for _, c := range inline {
+						@c
+					}
+				</div>
+				if a.live == nil {
+					<div class="mx-auto max-w-4xl py-16 text-center text-base-500">
+						Pick a project directory, start a session, and say what you want done.
+					</div>
+				}
+			</div>
+			<div class="border-t border-base-200 bg-base-100 px-6 py-3 dark:border-base-800 dark:bg-base-950">
+				<div class="mx-auto grid w-full min-w-0 max-w-4xl gap-2">
+					for _, e := range a.pendingList() {
+						<div class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm dark:border-amber-700 dark:bg-amber-950/40">
+							<div class="mb-2">
+								Allow <span class="font-mono">{ e.Tool }</span>?
+								<span class="text-base-500">{ preview(e.Input) }</span>
+							</div>
+							<div class="flex flex-wrap gap-2">
+								@button.New(button.Primary, button.Small, shuttle.OnClick(ctx, button.Attr, a.approve(e.CallID, agent.Allow))) {
+									Allow
+								}
+								@button.New(button.Outline, button.Small, shuttle.OnClick(ctx, button.Attr, a.approve(e.CallID, agent.AllowSession))) {
+									Allow for session
+								}
+								@button.New(button.Danger, button.Small, shuttle.OnClick(ctx, button.Attr, a.approve(e.CallID, agent.Deny))) {
+									Deny
+								}
+							</div>
+						</div>
+					}
+					if a.lastErr != "" {
+						<div class="text-sm text-red-600 dark:text-red-400">{ a.lastErr }</div>
+					}
+					@textarea.New(textarea.Rows(3), textarea.Placeholder("What should I do?"), shuttle.Bind(ctx, textarea.Attr, "draft"))
+					<div class="flex min-w-0 items-center justify-between gap-3">
+						<span class="min-w-0 flex-1 truncate text-xs text-base-500">
+							if a.busy {
+								<span class="mr-2 inline-block animate-pulse text-accent-600">working…</span>
+							}
+							{ a.status() }
+						</span>
+						<div class="flex shrink-0 gap-2">
+							if a.busy {
+								@button.New(button.Danger, button.Small, shuttle.OnClick(ctx, button.Attr, a.stop)) {
+									Stop
+								}
+							}
+							@button.New(button.Primary, shuttle.OnClick(ctx, button.Attr, a.send, shuttle.Indicator("sending"))) {
+								Send
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+}
+
+templ errorPage(msg string) {
+	<div class="p-6 text-red-600">{ msg }</div>
+}
