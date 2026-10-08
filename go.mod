@@ -7,7 +7,7 @@ require (
 	github.com/google/jsonschema-go v0.4.3
 	github.com/pietjan/colibri-go v0.0.0-20260928234412-6bc041ce4efd
 	github.com/pietjan/loom v0.0.0-20260830224512-a2c46f093c2a
-	github.com/pietjan/shuttle v0.0.0-20260829230527-e421bd234c38
+	github.com/pietjan/shuttle v0.0.0-20261008062625-9e7f4819b008
 	github.com/pietjan/spectacle v0.1.5
 )
 

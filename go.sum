@@ -41,8 +41,8 @@ github.com/pietjan/colibri-go v0.0.0-20260928234412-6bc041ce4efd h1:6eSHo5shmRBR
 github.com/pietjan/colibri-go v0.0.0-20260928234412-6bc041ce4efd/go.mod h1:f7UnKulD1TK42Hd1X0Cw1xonxyuJd+5M+ae/P9pVLxo=
 github.com/pietjan/loom v0.0.0-20260830224512-a2c46f093c2a h1:19+gulOuAeaoerMtQCA3SAWk/nyu9jEYIJtgMGaqj6Q=
 github.com/pietjan/loom v0.0.0-20260830224512-a2c46f093c2a/go.mod h1:wZx+ZB2sssi97225Q6aqsN6v0cb5b3Ch39ReE2VkhdE=
-github.com/pietjan/shuttle v0.0.0-20260829230527-e421bd234c38 h1:cG+6rx/YWuV7tFWTp5O7cX5hnZS7tzNlFSb6VfySbmc=
-github.com/pietjan/shuttle v0.0.0-20260829230527-e421bd234c38/go.mod h1:i6ZPmnw54NFKzlhuEr8G+0I0QUGxOOsIbJPMgB4itfQ=
+github.com/pietjan/shuttle v0.0.0-20261008062625-9e7f4819b008 h1:EtpW2mC3G76hVbLCITq747+Zsi9e00qrsyOuxGlHm3c=
+github.com/pietjan/shuttle v0.0.0-20261008062625-9e7f4819b008/go.mod h1:i6ZPmnw54NFKzlhuEr8G+0I0QUGxOOsIbJPMgB4itfQ=
 github.com/pietjan/spectacle v0.1.5 h1:L5g5C9kqnuf67scZJVtUBSYDjTCMY5h8UdXaYn8tBuQ=
 github.com/pietjan/spectacle v0.1.5/go.mod h1:stdBDa1XKqmrGa27SpRuibvyOnd6Z6BcyQvw8eA576E=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
