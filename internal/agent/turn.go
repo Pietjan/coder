@@ -167,10 +167,13 @@ func (c *Conversation) runToolCall(ctx context.Context, tc llm.ToolCall) string 
 		return done("error: "+err.Error(), true)
 	}
 	done(output, false)
-	if name == tool.MetaName {
-		if added := newlyActive(before, c.cfg.Tools.Active()); len(added) > 0 {
-			c.emit(Event{Kind: KindToolsActivated, Names: added})
-		}
+	// A tool the model called straight from the list, without describing
+	// it, is one it evidently knows: keep it in the request from now on.
+	if name != tool.MetaName {
+		c.cfg.Tools.Activate(name)
+	}
+	if added := newlyActive(before, c.cfg.Tools.Active()); len(added) > 0 {
+		c.emit(Event{Kind: KindToolsActivated, Names: added})
 	}
 	return output
 }
