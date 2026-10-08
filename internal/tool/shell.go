@@ -1,9 +1,10 @@
-// shell.go runs one-off shell commands for agents: the escape hatch
-// until a dedicated tool exists for the job. Commands run through the
-// platform shell (sh -c / cmd /c) in a fixed working directory with a
-// hard timeout; output is combined stdout+stderr, capped so a chatty
-// command cannot flood a model's context.
 package tool
+
+// One-off shell commands for agents, copied from toto's internal/shell:
+// the escape hatch until a dedicated tool exists for the job. Commands run
+// through the platform shell (sh -c / cmd /c) in a fixed working directory
+// with a hard timeout; output is combined stdout+stderr, capped so a
+// chatty command cannot flood a model's context.
 
 import (
 	"bytes"

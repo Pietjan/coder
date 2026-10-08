@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -132,7 +133,7 @@ func TestApprovalDenyAllowAllowSession(t *testing.T) {
 	if req.Tool != "write_file" {
 		t.Fatalf("request %+v", req)
 	}
-	if err := h.conv.Respond("nope", Deny); err != ErrUnknownRequest {
+	if err := h.conv.Respond("nope", Deny); !errors.Is(err, ErrUnknownRequest) {
 		t.Errorf("unknown request: %v", err)
 	}
 	if err := h.conv.Respond(req.CallID, Deny); err != nil {
@@ -191,7 +192,7 @@ func TestInterruptWhileWaitingForApproval(t *testing.T) {
 		t.Fatal(err)
 	}
 	h.next(KindApprovalRequested)
-	if err := h.conv.Send("x"); err != ErrBusy {
+	if err := h.conv.Send("x"); !errors.Is(err, ErrBusy) {
 		t.Errorf("Send while busy: %v", err)
 	}
 	h.conv.Interrupt()

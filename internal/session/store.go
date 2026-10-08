@@ -140,7 +140,7 @@ func (s *Store) Create(project, model string) (*Writer, Meta, error) {
 	}
 	now := time.Now()
 	id := now.Format("20060102T150405") + "-" + hex.EncodeToString(b[:])
-	f, err := os.OpenFile(s.path(id), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o640)
+	f, err := os.OpenFile(s.path(id), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, Meta{}, err
 	}
@@ -164,7 +164,7 @@ func (s *Store) Open(id string) (*Writer, []agent.Event, error) {
 	if len(events) == 0 || events[0].Kind != agent.KindSession {
 		return nil, nil, fmt.Errorf("session %s: no header", id)
 	}
-	f, err := os.OpenFile(s.path(id), os.O_APPEND|os.O_WRONLY, 0o640)
+	f, err := os.OpenFile(s.path(id), os.O_APPEND|os.O_WRONLY, 0o600)
 	if err != nil {
 		return nil, nil, err
 	}

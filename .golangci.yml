@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
+version: "2"
+
+linters:
+  # on top of the standard set: errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errorlint
+    - gosec
+    - intrange
+    - misspell
+    - nilerr
+    - revive
+    - unconvert
+    - unparam
+    - usestdlibvars
+  # staticcheck and unused ride on honnef.co/go/tools' IR builder, and the
+  # pinned v0.7.0 panics on Go 1.27 code. Re-enable when tools/go.mod moves
+  # to a release that knows this toolchain.
+  disable:
+    - staticcheck
+    - unused
+  exclusions:
+    generated: lax
+    paths:
+      - _templ\.go$
+    rules:
+      - path: _test\.go
+        linters:
+          - gosec
+          - unparam
+          - bodyclose
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - _templ\.go$

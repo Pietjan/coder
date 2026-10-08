@@ -149,7 +149,6 @@ func (a *App) switchTo(ctx context.Context, id string) error {
 	}
 	go func() {
 		for e := range ch {
-			e := e
 			if err := a.Do(func(ctx context.Context) error { return a.apply(ctx, e) }); err != nil {
 				return // unmounted
 			}
@@ -340,7 +339,7 @@ func (a *App) create(ctx context.Context, project string) error {
 	l, err := a.hub.Create(project)
 	if err != nil {
 		a.lastErr = err.Error()
-		return nil
+		return nil //nolint:nilerr // shown in the page, not a failed action
 	}
 	a.refreshSessions()
 	return a.Navigate(ctx, Prefix+"/"+l.Meta.ID)
